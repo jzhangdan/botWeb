@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>账单</title>
+</head>
+<body>
+  <script>
+    function decodeId(value) {
+      const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+      return decodeURIComponent(escape(atob(padded)));
+    }
+    const id = new URLSearchParams(location.search).get("id");
+    if (id) {
+      const path = decodeId(id).replace(/^\/+/, "").replace(/\/+$/, "");
+      location.replace(path + "/index.html");
+    } else {
+      document.body.textContent = "账单链接无效";
+    }
+  </script>
+</body>
+</html>
