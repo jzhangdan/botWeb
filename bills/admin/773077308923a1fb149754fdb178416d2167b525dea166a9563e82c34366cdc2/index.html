@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>群组账单切换</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    a { color: #278bd8; text-decoration: none; }
+    .page { max-width: 960px; margin: 0 auto; padding: 30px 16px 48px; }
+    h1 { margin: 0 0 22px; font-size: 28px; line-height: 1.2; }
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
+    select {
+      width: min(520px, 100%);
+      height: 44px;
+      border: 1px solid #d7edf9;
+      border-radius: 5px;
+      background: #f7f7f7;
+      padding: 0 14px;
+      font-size: 17px;
+    }
+    button {
+      border: 0;
+      border-radius: 4px;
+      background: #43a8e8;
+      color: #fff;
+      min-height: 44px;
+      padding: 0 24px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #e6e8eb; }
+    th, td { border: 1px solid #e6e8eb; padding: 12px; text-align: left; }
+    th { font-weight: 700; background: #fafafa; }
+    .empty { padding: 18px 0; color: #6f7b86; }
+    @media (max-width: 640px) {
+      .toolbar { flex-direction: column; align-items: stretch; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>群组账单切换</h1>
+    <div class="toolbar">
+      <select id="groupSelect"><option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUyMzA3NDc5OTEvYTQwYzk3NjFhODIyZTU1MWI1Mjc4MGVhMzI5N2FhMTM4ZTA3NzhkMTZlNzg0YTc3ODNjNzM1YmEzYjNhMjk0Nw">11111111 (5230747991)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUyMTUyNTI5NzQvN2M5M2JkYzcyODE3YzYxODRiN2Q0YTg5NjA3M2U5NzA4ZTc1NzQxZWY5MzNlOWE5MGY0OGJlYmVlZmEwMDEyMA">UU以及🐲行天下🐆 (5215252974)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUxNjU2OTAxODYvZTc0MzVmY2QyM2FjZDdhMzNhZDk4MThjZWY2YWNkOGQ2Mjg1N2M4NzJhNzdjOWYxZGNlOWZiOGFiNjRkOWUyOQ">算张群 (5165690186)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUxNTM5MzQyNjQvMmNiNmIxN2I5OGU5Y2QyYWRiZGMxN2JlNWI4ZGZiMGRmY2U4M2NlMDY1M2Q1YzI5NTViODA4MTVlNDBlMGMwMg">， (5153934264)</option></select>
+      <button id="openBill" type="button">查看账单</button>
+    </div>
+    
+    <table>
+      <thead><tr><th>群组</th><th>群 ID</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>11111111</td>
+          <td>5230747991</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUyMzA3NDc5OTEvYTQwYzk3NjFhODIyZTU1MWI1Mjc4MGVhMzI5N2FhMTM4ZTA3NzhkMTZlNzg0YTc3ODNjNzM1YmEzYjNhMjk0Nw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>UU以及🐲行天下🐆</td>
+          <td>5215252974</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUyMTUyNTI5NzQvN2M5M2JkYzcyODE3YzYxODRiN2Q0YTg5NjA3M2U5NzA4ZTc1NzQxZWY5MzNlOWE5MGY0OGJlYmVlZmEwMDEyMA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>算张群</td>
+          <td>5165690186</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUxNjU2OTAxODYvZTc0MzVmY2QyM2FjZDdhMzNhZDk4MThjZWY2YWNkOGQ2Mjg1N2M4NzJhNzdjOWYxZGNlOWZiOGFiNjRkOWUyOQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>，</td>
+          <td>5153934264</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvLTUxNTM5MzQyNjQvMmNiNmIxN2I5OGU5Y2QyYWRiZGMxN2JlNWI4ZGZiMGRmY2U4M2NlMDY1M2Q1YzI5NTViODA4MTVlNDBlMGMwMg">查看账单</a></td>
+        </tr></tbody>
+    </table>
+  </main>
+  <script>
+    document.getElementById("openBill").addEventListener("click", () => {
+      const url = document.getElementById("groupSelect").value;
+      if (url) location.href = url;
+    });
+  </script>
+</body>
+</html>
