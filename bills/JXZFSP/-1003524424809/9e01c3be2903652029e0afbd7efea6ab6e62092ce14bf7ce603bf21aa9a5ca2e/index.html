@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>金鑫取现8.8回u-二部 - 账单明细</title>
+  <style>
+    :root {
+      --ink: #111;
+      --muted: #6f7b86;
+      --line: #e6e8eb;
+      --blue: #43a8e8;
+      --green: #22b573;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    a { color: #278bd8; text-decoration: none; }
+    .topbar { padding: 6px 10px 0; font-size: 14px; color: var(--muted); }
+    .group-title { padding: 2px 10px 20px; font-size: 15px; font-weight: 700; }
+    .page { max-width: 1260px; margin: 0 auto; padding: 0 16px 40px; }
+    .search-row { display: flex; align-items: center; gap: 8px; margin: 8px 0 70px; color: #4d5964; font-size: 14px; }
+    input[type="datetime-local"] { border: 0; background: #fafafa; color: #7b8490; padding: 7px 9px; min-width: 180px; font: inherit; }
+    .toolbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-bottom: 58px; }
+    .toolbar-main { display: flex; justify-content: center; gap: 12px; }
+    select { width: min(320px, 48vw); height: 44px; border: 1px solid #d7edf9; border-radius: 5px; background: #f7f7f7; padding: 0 16px; font-size: 18px; }
+    button, .export-button { border: 0; border-radius: 4px; background: var(--blue); color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 26px; font-size: 17px; font-weight: 600; }
+    .export-button { justify-self: center; min-height: 31px; padding: 0 18px; border-radius: 18px; border: 1px solid #222; font-size: 14px; }
+    .content { max-width: 1210px; margin: 0 auto; }
+    h2 { margin: 0 0 12px 10px; font-size: 22px; line-height: 1.2; }
+    .table-wrap { overflow-x: auto; margin-bottom: 18px; }
+    table.bill { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 860px; border: 1px solid var(--line); }
+    table.bill th, table.bill td { border: 1px solid var(--line); padding: 10px 12px; text-align: center; vertical-align: middle; }
+    table.bill th { font-weight: 500; background: #fff; }
+    table.bill td { height: 64px; }
+    .money-main { font-weight: 800; display: block; }
+    .subline { color: #111; display: block; margin-top: 2px; }
+    .category-title, .total-title { font-size: 22px; font-weight: 800; margin: 18px 0 12px 10px; }
+    details { border-bottom: 1px solid #eef0f2; padding: 14px 8px; font-size: 18px; }
+    summary { cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "›"; color: #777; margin-right: 8px; font-size: 24px; vertical-align: -1px; }
+    details[open] summary::before { content: "⌄"; }
+    .category-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 15px; }
+    .category-table th, .category-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+    .total { margin: 22px 0 0 10px; font-size: 19px; }
+    .total p { margin: 8px 0; }
+    .coin { display: inline-flex; width: 16px; height: 16px; align-items: center; justify-content: center; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 800; margin-right: 4px; vertical-align: 1px; }
+    .empty { padding: 26px 10px; color: var(--muted); font-size: 18px; }
+    @media (max-width: 720px) {
+      .search-row, .toolbar-main { flex-wrap: wrap; }
+      .toolbar { grid-template-columns: 1fr; margin-bottom: 28px; }
+      .export-button { justify-self: start; }
+      select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">💡 点击当前账单可查看历史，手机端请横屏查看 <a href="#" onclick="history.replaceState(null,'',location.pathname);return false;">清理所有点击痕迹</a></div>
+  <div class="group-title">《群组：金鑫取现8.8回u-二部 -- 群 ID1003524424809》</div>
+  <main class="page">
+    <form id="filters">
+      <div class="search-row">
+        <label><input id="timeSearch" type="checkbox"> 按时间搜索</label>
+        <input id="startAt" type="datetime-local">
+        <input id="endAt" type="datetime-local">
+      </div>
+      <div class="toolbar">
+        <span></span>
+        <div class="toolbar-main">
+          <select id="daySelect"></select>
+          <button type="submit">查看账单</button>
+        </div>
+        <a class="export-button" id="exportXlsx" href="bill-current.xlsx">导出xlsx</a>
+      </div>
+    </form>
+    <div class="content" id="content"></div>
+  </main>
+  <script id="billData" type="application/json">{"title": "金鑫取现8.8回u-二部", "chatId": -1003524424809, "today": "2026-07-15", "dates": ["2026-07-15"], "entries": [{"id": 185, "entry_type": "income", "amount": 110000.0, "currency": "CNY", "rate": 8.35, "fee_rate": 0.0, "cny_amount": 110000.0, "usdt_amount": 13173.652694610779, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-15", "created_at": "2026-07-15T16:22:47", "deleted_at": null}], "xlsx": {"current": "bill-current.xlsx", "all": "bill-all.xlsx", "2026-07-15": "bill-2026-07-15.xlsx"}}</script>
+  <script>
+    const bill = JSON.parse(document.getElementById("billData").textContent);
+    const daySelect = document.getElementById("daySelect");
+    const timeSearch = document.getElementById("timeSearch");
+    const startAt = document.getElementById("startAt");
+    const endAt = document.getElementById("endAt");
+    const content = document.getElementById("content");
+    const exportXlsx = document.getElementById("exportXlsx");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    }
+    function money(value) {
+      const text = Number(value || 0).toFixed(2);
+      return text.replace(/\.00$/, "").replace(/(\.\d*[1-9])0$/, "$1");
+    }
+    function percent(value) {
+      return money(value) + "%";
+    }
+    function marker(entry) {
+      return entry.group_key || entry.note || "";
+    }
+    function operatorName(entry) {
+      return entry.username || "未知";
+    }
+    function remark(entry) {
+      if (entry.group_key && entry.note) return entry.note;
+      if (entry.is_deposit) return "寄存";
+      return "";
+    }
+    function entryTime(entry) {
+      if (entry.created_at && entry.created_at.length >= 19) return entry.created_at.slice(5, 10) + " " + entry.created_at.slice(11, 19);
+      return entry.created_at || "";
+    }
+    function currentDay() {
+      return bill.today || new Date().toISOString().slice(0, 10);
+    }
+    function setDefaultTimes() {
+      const day = daySelect.value === "all" || daySelect.value === "current" ? currentDay() : daySelect.value;
+      if (!startAt.value) startAt.value = day + "T00:00";
+      if (!endAt.value) endAt.value = day + "T23:59";
+    }
+    function initDays() {
+      const options = [["current", "当前账单"], ["all", "全部历史"], ...bill.dates.map(day => [day, day])];
+      daySelect.innerHTML = options.map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`).join("");
+      setDefaultTimes();
+    }
+    function selectedEntries() {
+      let rows = bill.entries.slice();
+      if (daySelect.value === "current") rows = rows.filter(entry => entry.occurred_on === currentDay() && !entry.deleted_at);
+      else if (daySelect.value !== "all") rows = rows.filter(entry => entry.occurred_on === daySelect.value && !entry.deleted_at);
+      if (timeSearch.checked) {
+        const startValue = startAt.value ? startAt.value.replace("T", " ") : "";
+        const endValue = endAt.value ? endAt.value.replace("T", " ") + ":59" : "";
+        rows = rows.filter(entry => (!startValue || entry.created_at >= startValue) && (!endValue || entry.created_at <= endValue));
+      }
+      return rows;
+    }
+    function incomeRow(entry) {
+      return `<tr><td>${escapeHtml(entryTime(entry))}</td><td><span class="money-main">${money(entry.cny_amount)}</span><span class="subline">${percent(entry.fee_rate)} = ${money(entry.rate)}</span></td><td>${money(entry.usdt_amount)}</td><td>${escapeHtml(marker(entry))}</td><td>${escapeHtml(operatorName(entry))}</td><td>${escapeHtml(remark(entry))}</td></tr>`;
+    }
+    function disbursementRow(entry) {
+      const amount = entry.currency === "CNY" ? `${money(entry.usdt_amount)} (${money(entry.cny_amount)})` : money(entry.usdt_amount);
+      return `<tr><td>${escapeHtml(entryTime(entry))}</td><td><span class="coin">T</span>${escapeHtml(amount)}</td><td>${escapeHtml(marker(entry))}</td><td>${escapeHtml(operatorName(entry))}</td><td>${escapeHtml(remark(entry))}</td></tr>`;
+    }
+    function table(title, rows, columns, rowRenderer) {
+      const empty = `<tr><td colspan="${columns.length}">暂无记录</td></tr>`;
+      return `<h2>${title}(${rows.length}笔)</h2><div class="table-wrap"><table class="bill"><thead><tr>${columns.map(name => `<th>${name}</th>`).join("")}</tr></thead><tbody>${rows.map(rowRenderer).join("") || empty}</tbody></table></div>`;
+    }
+    function aggregate(rows, keyFn) {
+      const groups = new Map();
+      rows.forEach(entry => {
+        const key = keyFn(entry) || "未标记";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(entry);
+      });
+      return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0], "zh-CN"));
+    }
+    function category(title, grouped) {
+      if (!grouped.length) return `<details><summary>${escapeHtml(title)}</summary><div class="empty">暂无数据</div></details>`;
+      const rows = grouped.map(([name, items]) => {
+        const incomeU = sum(items.filter(e => e.entry_type === "income"), "usdt_amount");
+        const payoutU = sum(items.filter(e => e.entry_type === "payout"), "usdt_amount");
+        const disbursedU = sum(items.filter(e => e.entry_type === "disbursement"), "usdt_amount");
+        const cnyTotal = sum(items.filter(e => e.entry_type === "income"), "cny_amount") - sum(items.filter(e => e.entry_type === "payout"), "cny_amount");
+        return `<tr><td>${escapeHtml(name)}</td><td>${items.length}</td><td>${money(cnyTotal)}</td><td>${money(incomeU - payoutU)}</td><td>${money(disbursedU)}</td></tr>`;
+      }).join("");
+      return `<details><summary>${escapeHtml(title)}</summary><table class="category-table"><thead><tr><th>分类</th><th>笔数</th><th>总入款</th><th>应下发</th><th>已下发</th></tr></thead><tbody>${rows}</tbody></table></details>`;
+    }
+    function sum(rows, key) {
+      return rows.reduce((total, entry) => total + Number(entry[key] || 0), 0);
+    }
+    function render() {
+      const rows = selectedEntries();
+      const income = rows.filter(entry => entry.entry_type === "income");
+      const payout = rows.filter(entry => entry.entry_type === "payout");
+      const disbursement = rows.filter(entry => entry.entry_type === "disbursement");
+      const totalCny = sum(income, "cny_amount") - sum(payout, "cny_amount");
+      const shouldU = sum(income, "usdt_amount") - sum(payout, "usdt_amount");
+      const disbursedU = sum(disbursement, "usdt_amount");
+      exportXlsx.href = bill.xlsx[daySelect.value] || "bill-current.xlsx";
+      content.innerHTML = [
+        table("入账", income, ["时间", "金额", "结算", "标记人", "操作人", "备注"], incomeRow),
+        payout.length ? table("代付", payout, ["时间", "金额", "结算", "标记人", "操作人", "备注"], incomeRow) : "",
+        table("下发", disbursement, ["时间", "金额", "标记人", "操作人", "备注"], disbursementRow),
+        rows.length ? "" : '<div class="empty">暂无账单记录。</div>',
+        '<div class="category-title">记账分类</div>',
+        category("按(操作员)分类", aggregate(rows, operatorName)),
+        category("按(标记类)分组", aggregate(rows, marker)),
+        category("按(备注)分组", aggregate(rows, remark)),
+        category("按(入款汇率)分类", aggregate(income, entry => money(entry.rate))),
+        category("按(入款汇率和操作人)分类", aggregate(income, entry => money(entry.rate) + " / " + operatorName(entry))),
+        `<div class="total-title">总计</div><div class="total"><p>总入款： ${money(totalCny)}</p><p>应下发： ${money(shouldU)} <span class="coin">T</span></p><p>已下发： ${money(disbursedU)} <span class="coin">T</span></p><p>未下发： ${money(shouldU - disbursedU)} <span class="coin">T</span></p></div>`,
+      ].join("");
+    }
+    document.getElementById("filters").addEventListener("submit", event => {
+      event.preventDefault();
+      render();
+    });
+    daySelect.addEventListener("change", () => {
+      startAt.value = "";
+      endAt.value = "";
+      setDefaultTimes();
+      render();
+    });
+    timeSearch.addEventListener("change", render);
+    startAt.addEventListener("change", render);
+    endAt.addEventListener("change", render);
+    initDays();
+    render();
+  </script>
+</body>
+</html>
