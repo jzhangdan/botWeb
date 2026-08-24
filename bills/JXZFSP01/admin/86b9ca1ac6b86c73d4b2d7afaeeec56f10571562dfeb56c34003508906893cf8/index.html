@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>群组账单切换</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    a { color: #278bd8; text-decoration: none; }
+    .page { max-width: 960px; margin: 0 auto; padding: 30px 16px 48px; }
+    h1 { margin: 0 0 22px; font-size: 28px; line-height: 1.2; }
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
+    select {
+      width: min(520px, 100%);
+      height: 44px;
+      border: 1px solid #d7edf9;
+      border-radius: 5px;
+      background: #f7f7f7;
+      padding: 0 14px;
+      font-size: 17px;
+    }
+    button {
+      border: 0;
+      border-radius: 4px;
+      background: #43a8e8;
+      color: #fff;
+      min-height: 44px;
+      padding: 0 24px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #e6e8eb; }
+    th, td { border: 1px solid #e6e8eb; padding: 12px; text-align: left; }
+    th { font-weight: 700; background: #fafafa; }
+    .empty { padding: 18px 0; color: #6f7b86; }
+    @media (max-width: 640px) {
+      .toolbar { flex-direction: column; align-items: stretch; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>群组账单切换</h1>
+    <div class="toolbar">
+      <select id="groupSelect"><option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwMTQ1MTEyMzEvZTVmYTJiZjdjOTE2YjdiODQxNTRiY2IyYjZkZjMwNmQ5NWY2ZWZlYTQyNWZiMmM5YjkyZWNjNGM4NWM5NDQ1Ng">C21 金鑫-加白私户 (5014511231)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4OTEyOTk0MjAvMWQ4NzVlYzcxZDYwNmI2ZmI0ZWYyMDdjZGNhOGQ5ZTg5NzU2MTAwNTQ4MzRlYjQxYjM3NzVkNzVkN2M2YmQwNg">GP1 小美供安然黄金现金 NFC (4891299420)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMzA0NjI5ODUvZmM2OWJjODEwMWM1NWM3ZWVjYTcxOGU5MjIyN2ZiZTliMDI2ZWM5ZWMzYWZjYzc5YTZjMTMwNzgzOTM3ZTAwNA">K026【pubu卡供空降 开心】 (5230462985)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4Mjc3NjIwNDIvMWMxMTY5ZjZlZDAyY2U0YjViMTY3MzFjMTQ3YmZjOTE0NDE5MzhkMmViYjRkOTYwYTU5Njk0ZWVlOGE5MTE1Nw">Niko供金鑫取现 (4827762042)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3NDI3MTY2ODEvMzcwZmM4NzE3NWIwNTEyMWFhYWFmOWViZjYzMDZlNmY5ZjcxY2E2ZDgyMDc2MGZlYjBmM2QyMTkxYWEzOTRlMQ">Niko结算群 (4742716681)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUzNDI4MTA2NjYvNWUxNGRiNjk4MmJmZDBiYTljNDhiMzhlY2JkMzBiYzQ2OWIxNjFiYWFhNDE2ZjU1NzAwMjY4OWUxNGI1YTlmMA">VIP打卡结算群 (5342810666)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyOTA3ODU2OTAvODEyZTcwMjg2ZjgxY2VmNTgyMzUyZGZkMTI5YzBjNmQ2ZjViMDlhYjE0ZTRlZGQ0M2IzNjNmY2MyNTk1ZTFjYQ">久部-金鑫 (5290785690)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMjY0ODU2MDAvNzMxMWY4YTI5NDJjMWZhMDRhYWQxNGU0MDE5ZmMwNWJhYWVlYzU3ZThkYzEwMzFhMTZiNWE4NDNhMmM0ZWQ2Mw">内港 (5226485600)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3Nzk4MjM1MjMvNTQ3NjcxOGM2YTljNDcyYjI2YWQ1NjE0MDlmYmFlYjkyN2Q0OGY2NTNjYmRmMGU0NmVkYzJkYWEyMzZkYTlkMw">取现4 金鑫 9.5 (4779823523)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwMTgwMjU5NzMvMTI0YTY4NThkZGZmZWY4YmM3ZTBlOGFjNDY0Y2VlNzJiMWM1MWRlODJjMmRmMDkwYjU0MTRmM2VkNzAwZWViMQ">和尚港卡7.4 (5018025973)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNzc5ODU5MzkvYTMzNzg2Mjk1MGIwYTMxODBjNzg4MWE5NjE1YjdiNzJjZTIxOThmNWM0M2JmYzQ1YTA5M2U3MmUyNDhiOGU2NQ">大美取现AA (5277985939)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0NjQ3MzkyOTcvM2E5ZGNmZDQ2NzY4ZTdmYTI1NWFkNzBmZWM1NDNmM2Y0NGRhZWE3OWE1ZDFkNzAyNDgxZDk2NWYwZjk1MjVlMw">大美取现RR (5464739297)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMDA1MTU0MjAvYjdkYzE3YzJhZjdjZWViNjEwOTEzZWI2MzQ2MGIwODEzMjc2YjU5NjQxYWExMDgwMmRkYWE1MmJiZmVhZWEwOQ">安琪，小美以及M5 (5200515420)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NjU1OTA5ODQvMThiYTFkZTkxY2Q2YzY2YTM0YzMxODk5MWUxNjY3MGIxZDU4ZTQxMDNlM2M1ZTNlNmQzZmRhMTg0OWFhZWIxMg">富婆料群 (5565590984)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1ODAzNTk2NTcvYjEzNzNjMzgxYTFhMWRkNzBjNzA1MzNiNWQ0Yzk3NjI2Y2VkOGYyOTZmMGNhNTRiNzFlYzk3NWY2MmEwMDkzOA">小美 现金t1 (5580359657)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDI4NTkyNTA5OTgvYjU3NjkwNWRlZGNiMTMxMWJmODBhZWUzMTU5MWFlMzdkNjNiNzllNWEzNzYyOGU4MWZhNzZiZGY0MjY0OTJjMQ">小美上门（现金，黄金） (1002859250998)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0ODgxMDIzMTcvN2FhZDQzNzcwYzQ2NjNjMzQyZDM5ZGVmOGRkZTEwNTI4ZDJhZGVhNDBjMTE4ZDRmMzNjMjliNWE1OWI1ZmI5NQ">小美供启盛现金通道 (5488102317)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1MTQwNTgzNTQvYWNiMzA0ZGY3ODZiYzBmNzcwNTk2Yjk2N2MyZTQ2MDMxOTM1MzkwMGZhNTY5MmUyMzcyYzU3MjgwY2E5Y2ZkYQ">小美取现 (5514058354)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5OTkzNjcxOTIvNDdkZjBiYTRlNWM4NzhjZGFjMjRjN2Q3OGM1OWZkMWNkMWIzNTBlOTM4MjY2MjM2MzhmZjBlYmJiYWFmNjFmYw">小美取现供B部 (4999367192)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NzA0NDUwMDIvNWU0YmVhNmRjZWEzMDRjMWI1MzcyMzIyOWU2MDMwOTk2OWI4NDJlNDM1ZmNlODMzMTU2ZjFlZmViOGY0MDQ3ZQ">小美川渝直营车 (5570445002)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5OTc4MTUwMTYvZWE5NDM4ZTMxOWZjMWVmMTJjMThkNjBmZGU4YjRlYzlkOTg0ZWVlMzY5NGNmZjY1NmFjZDc1ZmEzNjZhYzJhYQ">小美碰碰机 (4997815016)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1MzgyMzA3MzUvMzAxY2NkOTMxOWM1ZmYwYTY4ZDAzNzljMzdhYmFlZjI2Y2FhZGY1ZmZkZmI0M2NjNWVhYWNlMjkwZTViN2FmMg">平安-金鑫取现k1 (5538230735)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0Mzc4MDQxNDEvN2I1OTlkMzRjMzZlNjhhZTM3Yjc3ZjUzMTA4ODM0NmNjZGQxYzVkYTk1NjIwNjRjNzI0MzA5MTg1MGIyYjFjMg">平安-金鑫取现k2 (5437804141)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUxMDUwNTM1MjkvYTI0Yjc4ZmQ5Y2FiZDkxMzc3MTdmZjZiYTVhNWM5MjcxNjY1OTk2MGQxZjJjNjIyNzg5NTcxNDQ3YzkyYmEwNA">平安-金鑫取现k3 (5105053529)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwOTk0NzQ5OTEvNDg2OTNlMzlkNjBlNDJjZjk5NTE3MThjNTU4N2UzZTI3MWYzZTQ2NGNmMGNlOWM0OTg0NGRjNjI5NWI0M2VjNw">拿现车队2 (5099474991)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDQzNzU4NzAyNjQvZWRjYjJkNDBhOWE1NTVlMjRlZjJlYTAyMDhhMTNlOTAyZjliZTMxNzA1YTg0YzlkZTZmNTViMWY2YmNlMTg1Nw">杰森证卷 (1004375870264)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5Njk0NTU2NTIvM2EwODk0YWVkMGRjMGM3YTYxZGU3NjMzZWJhZmY4NGE0MjZmZGRlYjhjNjg1YmI1M2E1MzkyYzFkZDdiZmUyYw">直播金鑫取现 (4969455652)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4MzE4NzAyNjgvNDA3MTkzNjhkZDJkOGFmMjIyZTE3ZDdkMmFkODFkMzBhOTBlYzVjODdkYmNmOTAzOWZjNDhkNDZkYjNlYTJhMw">证券 (4831870268)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ2ODQ0Nzc2MTUvZDJhMmIzOWVlYmNjZGZmNDI1NmQ4NjMxOThmZDY2MTNlNTRkZGMyMzlmNDA5ODI3NzRiOWY4MGIyYmZlNDllOA">证券料方 8.75 (4684477615)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM5NzMwNDg0OTUvMzUwYzViZmI2ODlmZTU3OGQ5MjUwZDExMjQ2NmM2NzM0MzEzMDA4ZDEzZDVlNGYwZWVlMjI5YmMzZjBmYzI0Ng">远洋供小美-全国拿现车（8.9） (1003973048495)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDQ0ODEwNjQ2MzMvMjc3MjQ0ODFiNGNiODc2NDI5NmUwOTIyYWFkYmYzNGNjYzRkMzg0ZWEwNTU0MTA1NTg1YTk1YTFkYmE2NjZmMA">金流对接 (1004481064633)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNzMzNjUzMzgvYTQ1ZWUxNjY3NDA5M2UxNzg0NDk4OTRhNTk2NzI2MzgyNDY3OGEwODUyYjBlNzQ0NWE5MTdjNDNhMzQxM2Q1ZA">金流对接 (5273365338)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4MjM3ODYwODkvYjNjMTc3MTMxZDQwMTJlODhjNDdhZGJiNWE2ZDg4ZWRlNjNhMDcyYjVlZjU5MGJmZjczOGEwNzQyNDM5ZjZmOQ">金鑫-供糖果/抖音码 (4823786089)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM3MzM3MDY2OTMvNmQ4NTAwOGY3Zjc5NzJmZDkwODMyYTEwMjI4NzZkZjM4NDk3NmExMTY1YWVmODBjMWUzZjI1NmQyZTcyMGJkZg">金鑫-花花拿现对接 (1003733706693)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5MjU2NDYwNjgvM2JlZTEzZjcyZmEzMmFhOTQzZjVjYWExNzc5NTI4Y2RjMjFhMzg3MGEwM2IyYzY4YjQyZjAxNmFiOGFlNGFkNw">金鑫Nfc境外泰国香港 (4925646068)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNTMyNjUxNzUvODQ1MWNjODg3NzI3YjM0NGRjMzZkY2MzOTZhZTRkZmI1NDhhNGRhYmFkNGU2MDUwZWU0YmE1YTJmYWMwYzU4Yg">金鑫供K2现金群 (5253265175)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUxNTU5NTA2NTgvYzdiMzNlM2E3YTQ5OTZmOGU5NzJmODI2NTIyOWRkMmVkYjY3MmVkYzRmZDk2NjRlMjYzNjUzZjk0ODhmMjcxYQ">金鑫供Lucy现金 (5155950658)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NjA5MjIyODYvYTA0MDA5ZGViN2U2OTU3MGJjOWY1Y2E3NjUyMTBlNDg3ZTQxYzM4ZDhlMTIwZTIzNDFiZmU3MDU2YTM5ZjcyZA">金鑫供大牛全国取现DD (5560922286)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNDkwMjAyMDIvN2M5ZTI0YjlhMzljMzdmNzIwNDgzNzU3YzAyYTFlODg0YzNhOGIyZWNmZTBkOWQ4OTIwNzRjM2FmNDFkMTRhOA">金鑫供杭州华联小额户 (5249020202)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4NzE2MTMyNjUvYWNhZGViZTlhODI5MDNjMmE4ODcwMDA2MmZjZjFjNzQ4YWYxMGI2NzliMGMzZTMyZWUyNTRmZjU3MGQ2MmFiYQ">金鑫供赵云证券（抖音码） (4871613265)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDMxMjU2ODExNDkvNzIwNDMwYTliNTIxNzc0MmVlMjE5NmVlMjE5YmQ1MjMzODM5NGIxZjllMTcyZTBiZDkyMDFkZmI1ZjI3ZDM1Yw">金鑫取现 (1003125681149)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM1MjQ0MjQ4MDkvOWUwMWMzYmUyOTAzNjUyMDI5ZTBhZmJkN2VmZWE2YWI2ZTYyMDkyY2UxNGJmN2NlNjAzYmYyMWFhOWE1Y2EyZQ">金鑫取现8.8回u-二部 (1003524424809)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDI0MjczODI0NjcvZDAzZTBhMDE3OWJkOTdjY2FhODQyYzdiN2UyZTgxM2ExYzRjOWQ2OGY3ZmYwZjUyZjQ2YjlmYTgwYzlhYWM1MQ">金鑫工作群 (1002427382467)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwNTg4NTkwMDkvMDVjMzNiOGY0OWZiMDI0ZGM0MjdhMTJjMmYxMzExNWQwMzUzYjZjYTllZjc0ZGUxNWUxMTc4YzNmN2Q2YzUyMg">金鑫现金 黄金供浩天大区 (5058859009)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3OTAxMzk2ODgvODg1YmUzMDc3MTQyZmRiNTllNjE2NzY0NWI3ZmE2YzlhZDVmNmZjNDU2MDZiNTZlYjhmMTY5NzA4ZWY5YTgzYg">金鑫黄金对接 贰群 8.2 (4790139688)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMzIzODc2NTQvZjRhNDExNjc1NjBjMWRhMjE0YzA4MzgxMzdiNmZiYmE5YTlhZWY5Y2NjZjcwMTAyZWZiZGQyZTRkMWU2OWI2NA">鑫汇供金鑫 (5232387654)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3NjU0NTQwMjEvOWY3YzEzMjZmYzQ3NzY3MDVjZTM0MWY1MjhmMGZmMGIyZWFiZjFmNTk4MDE5NWJhZTRjYjA1NDU4M2U4MzQ4YQ">钱多多抖音码 (4765454021)</option>
+<option value="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMDMwNTU3MDMvZTk3MjhkM2RhZGJkY2I0M2Q5OGRlMGVlNzYzNDBjYmZiNzRiNTI5ZjAzM2RiYjlhNWVkNjk4MGVhYzM1ZDIzYw">陆部-金鑫 (5203055703)</option></select>
+      <button id="openBill" type="button">查看账单</button>
+    </div>
+    
+    <table>
+      <thead><tr><th>群组</th><th>群 ID</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>C21 金鑫-加白私户</td>
+          <td>5014511231</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwMTQ1MTEyMzEvZTVmYTJiZjdjOTE2YjdiODQxNTRiY2IyYjZkZjMwNmQ5NWY2ZWZlYTQyNWZiMmM5YjkyZWNjNGM4NWM5NDQ1Ng">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>GP1 小美供安然黄金现金 NFC</td>
+          <td>4891299420</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4OTEyOTk0MjAvMWQ4NzVlYzcxZDYwNmI2ZmI0ZWYyMDdjZGNhOGQ5ZTg5NzU2MTAwNTQ4MzRlYjQxYjM3NzVkNzVkN2M2YmQwNg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>K026【pubu卡供空降 开心】</td>
+          <td>5230462985</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMzA0NjI5ODUvZmM2OWJjODEwMWM1NWM3ZWVjYTcxOGU5MjIyN2ZiZTliMDI2ZWM5ZWMzYWZjYzc5YTZjMTMwNzgzOTM3ZTAwNA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>Niko供金鑫取现</td>
+          <td>4827762042</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4Mjc3NjIwNDIvMWMxMTY5ZjZlZDAyY2U0YjViMTY3MzFjMTQ3YmZjOTE0NDE5MzhkMmViYjRkOTYwYTU5Njk0ZWVlOGE5MTE1Nw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>Niko结算群</td>
+          <td>4742716681</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3NDI3MTY2ODEvMzcwZmM4NzE3NWIwNTEyMWFhYWFmOWViZjYzMDZlNmY5ZjcxY2E2ZDgyMDc2MGZlYjBmM2QyMTkxYWEzOTRlMQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>VIP打卡结算群</td>
+          <td>5342810666</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUzNDI4MTA2NjYvNWUxNGRiNjk4MmJmZDBiYTljNDhiMzhlY2JkMzBiYzQ2OWIxNjFiYWFhNDE2ZjU1NzAwMjY4OWUxNGI1YTlmMA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>久部-金鑫</td>
+          <td>5290785690</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyOTA3ODU2OTAvODEyZTcwMjg2ZjgxY2VmNTgyMzUyZGZkMTI5YzBjNmQ2ZjViMDlhYjE0ZTRlZGQ0M2IzNjNmY2MyNTk1ZTFjYQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>内港</td>
+          <td>5226485600</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMjY0ODU2MDAvNzMxMWY4YTI5NDJjMWZhMDRhYWQxNGU0MDE5ZmMwNWJhYWVlYzU3ZThkYzEwMzFhMTZiNWE4NDNhMmM0ZWQ2Mw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>取现4 金鑫 9.5</td>
+          <td>4779823523</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3Nzk4MjM1MjMvNTQ3NjcxOGM2YTljNDcyYjI2YWQ1NjE0MDlmYmFlYjkyN2Q0OGY2NTNjYmRmMGU0NmVkYzJkYWEyMzZkYTlkMw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>和尚港卡7.4</td>
+          <td>5018025973</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwMTgwMjU5NzMvMTI0YTY4NThkZGZmZWY4YmM3ZTBlOGFjNDY0Y2VlNzJiMWM1MWRlODJjMmRmMDkwYjU0MTRmM2VkNzAwZWViMQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>大美取现AA</td>
+          <td>5277985939</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNzc5ODU5MzkvYTMzNzg2Mjk1MGIwYTMxODBjNzg4MWE5NjE1YjdiNzJjZTIxOThmNWM0M2JmYzQ1YTA5M2U3MmUyNDhiOGU2NQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>大美取现RR</td>
+          <td>5464739297</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0NjQ3MzkyOTcvM2E5ZGNmZDQ2NzY4ZTdmYTI1NWFkNzBmZWM1NDNmM2Y0NGRhZWE3OWE1ZDFkNzAyNDgxZDk2NWYwZjk1MjVlMw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>安琪，小美以及M5</td>
+          <td>5200515420</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMDA1MTU0MjAvYjdkYzE3YzJhZjdjZWViNjEwOTEzZWI2MzQ2MGIwODEzMjc2YjU5NjQxYWExMDgwMmRkYWE1MmJiZmVhZWEwOQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>富婆料群</td>
+          <td>5565590984</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NjU1OTA5ODQvMThiYTFkZTkxY2Q2YzY2YTM0YzMxODk5MWUxNjY3MGIxZDU4ZTQxMDNlM2M1ZTNlNmQzZmRhMTg0OWFhZWIxMg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美 现金t1</td>
+          <td>5580359657</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1ODAzNTk2NTcvYjEzNzNjMzgxYTFhMWRkNzBjNzA1MzNiNWQ0Yzk3NjI2Y2VkOGYyOTZmMGNhNTRiNzFlYzk3NWY2MmEwMDkzOA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美上门（现金，黄金）</td>
+          <td>1002859250998</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDI4NTkyNTA5OTgvYjU3NjkwNWRlZGNiMTMxMWJmODBhZWUzMTU5MWFlMzdkNjNiNzllNWEzNzYyOGU4MWZhNzZiZGY0MjY0OTJjMQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美供启盛现金通道</td>
+          <td>5488102317</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0ODgxMDIzMTcvN2FhZDQzNzcwYzQ2NjNjMzQyZDM5ZGVmOGRkZTEwNTI4ZDJhZGVhNDBjMTE4ZDRmMzNjMjliNWE1OWI1ZmI5NQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美取现</td>
+          <td>5514058354</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1MTQwNTgzNTQvYWNiMzA0ZGY3ODZiYzBmNzcwNTk2Yjk2N2MyZTQ2MDMxOTM1MzkwMGZhNTY5MmUyMzcyYzU3MjgwY2E5Y2ZkYQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美取现供B部</td>
+          <td>4999367192</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5OTkzNjcxOTIvNDdkZjBiYTRlNWM4NzhjZGFjMjRjN2Q3OGM1OWZkMWNkMWIzNTBlOTM4MjY2MjM2MzhmZjBlYmJiYWFmNjFmYw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美川渝直营车</td>
+          <td>5570445002</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NzA0NDUwMDIvNWU0YmVhNmRjZWEzMDRjMWI1MzcyMzIyOWU2MDMwOTk2OWI4NDJlNDM1ZmNlODMzMTU2ZjFlZmViOGY0MDQ3ZQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>小美碰碰机</td>
+          <td>4997815016</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5OTc4MTUwMTYvZWE5NDM4ZTMxOWZjMWVmMTJjMThkNjBmZGU4YjRlYzlkOTg0ZWVlMzY5NGNmZjY1NmFjZDc1ZmEzNjZhYzJhYQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>平安-金鑫取现k1</td>
+          <td>5538230735</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1MzgyMzA3MzUvMzAxY2NkOTMxOWM1ZmYwYTY4ZDAzNzljMzdhYmFlZjI2Y2FhZGY1ZmZkZmI0M2NjNWVhYWNlMjkwZTViN2FmMg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>平安-金鑫取现k2</td>
+          <td>5437804141</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU0Mzc4MDQxNDEvN2I1OTlkMzRjMzZlNjhhZTM3Yjc3ZjUzMTA4ODM0NmNjZGQxYzVkYTk1NjIwNjRjNzI0MzA5MTg1MGIyYjFjMg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>平安-金鑫取现k3</td>
+          <td>5105053529</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUxMDUwNTM1MjkvYTI0Yjc4ZmQ5Y2FiZDkxMzc3MTdmZjZiYTVhNWM5MjcxNjY1OTk2MGQxZjJjNjIyNzg5NTcxNDQ3YzkyYmEwNA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>拿现车队2</td>
+          <td>5099474991</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwOTk0NzQ5OTEvNDg2OTNlMzlkNjBlNDJjZjk5NTE3MThjNTU4N2UzZTI3MWYzZTQ2NGNmMGNlOWM0OTg0NGRjNjI5NWI0M2VjNw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>杰森证卷</td>
+          <td>1004375870264</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDQzNzU4NzAyNjQvZWRjYjJkNDBhOWE1NTVlMjRlZjJlYTAyMDhhMTNlOTAyZjliZTMxNzA1YTg0YzlkZTZmNTViMWY2YmNlMTg1Nw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>直播金鑫取现</td>
+          <td>4969455652</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5Njk0NTU2NTIvM2EwODk0YWVkMGRjMGM3YTYxZGU3NjMzZWJhZmY4NGE0MjZmZGRlYjhjNjg1YmI1M2E1MzkyYzFkZDdiZmUyYw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>证券</td>
+          <td>4831870268</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4MzE4NzAyNjgvNDA3MTkzNjhkZDJkOGFmMjIyZTE3ZDdkMmFkODFkMzBhOTBlYzVjODdkYmNmOTAzOWZjNDhkNDZkYjNlYTJhMw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>证券料方 8.75</td>
+          <td>4684477615</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ2ODQ0Nzc2MTUvZDJhMmIzOWVlYmNjZGZmNDI1NmQ4NjMxOThmZDY2MTNlNTRkZGMyMzlmNDA5ODI3NzRiOWY4MGIyYmZlNDllOA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>远洋供小美-全国拿现车（8.9）</td>
+          <td>1003973048495</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM5NzMwNDg0OTUvMzUwYzViZmI2ODlmZTU3OGQ5MjUwZDExMjQ2NmM2NzM0MzEzMDA4ZDEzZDVlNGYwZWVlMjI5YmMzZjBmYzI0Ng">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金流对接</td>
+          <td>1004481064633</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDQ0ODEwNjQ2MzMvMjc3MjQ0ODFiNGNiODc2NDI5NmUwOTIyYWFkYmYzNGNjYzRkMzg0ZWEwNTU0MTA1NTg1YTk1YTFkYmE2NjZmMA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金流对接</td>
+          <td>5273365338</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNzMzNjUzMzgvYTQ1ZWUxNjY3NDA5M2UxNzg0NDk4OTRhNTk2NzI2MzgyNDY3OGEwODUyYjBlNzQ0NWE5MTdjNDNhMzQxM2Q1ZA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫-供糖果/抖音码</td>
+          <td>4823786089</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4MjM3ODYwODkvYjNjMTc3MTMxZDQwMTJlODhjNDdhZGJiNWE2ZDg4ZWRlNjNhMDcyYjVlZjU5MGJmZjczOGEwNzQyNDM5ZjZmOQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫-花花拿现对接</td>
+          <td>1003733706693</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM3MzM3MDY2OTMvNmQ4NTAwOGY3Zjc5NzJmZDkwODMyYTEwMjI4NzZkZjM4NDk3NmExMTY1YWVmODBjMWUzZjI1NmQyZTcyMGJkZg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫Nfc境外泰国香港</td>
+          <td>4925646068</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ5MjU2NDYwNjgvM2JlZTEzZjcyZmEzMmFhOTQzZjVjYWExNzc5NTI4Y2RjMjFhMzg3MGEwM2IyYzY4YjQyZjAxNmFiOGFlNGFkNw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫供K2现金群</td>
+          <td>5253265175</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNTMyNjUxNzUvODQ1MWNjODg3NzI3YjM0NGRjMzZkY2MzOTZhZTRkZmI1NDhhNGRhYmFkNGU2MDUwZWU0YmE1YTJmYWMwYzU4Yg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫供Lucy现金</td>
+          <td>5155950658</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUxNTU5NTA2NTgvYzdiMzNlM2E3YTQ5OTZmOGU5NzJmODI2NTIyOWRkMmVkYjY3MmVkYzRmZDk2NjRlMjYzNjUzZjk0ODhmMjcxYQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫供大牛全国取现DD</td>
+          <td>5560922286</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTU1NjA5MjIyODYvYTA0MDA5ZGViN2U2OTU3MGJjOWY1Y2E3NjUyMTBlNDg3ZTQxYzM4ZDhlMTIwZTIzNDFiZmU3MDU2YTM5ZjcyZA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫供杭州华联小额户</td>
+          <td>5249020202</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyNDkwMjAyMDIvN2M5ZTI0YjlhMzljMzdmNzIwNDgzNzU3YzAyYTFlODg0YzNhOGIyZWNmZTBkOWQ4OTIwNzRjM2FmNDFkMTRhOA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫供赵云证券（抖音码）</td>
+          <td>4871613265</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ4NzE2MTMyNjUvYWNhZGViZTlhODI5MDNjMmE4ODcwMDA2MmZjZjFjNzQ4YWYxMGI2NzliMGMzZTMyZWUyNTRmZjU3MGQ2MmFiYQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫取现</td>
+          <td>1003125681149</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDMxMjU2ODExNDkvNzIwNDMwYTliNTIxNzc0MmVlMjE5NmVlMjE5YmQ1MjMzODM5NGIxZjllMTcyZTBiZDkyMDFkZmI1ZjI3ZDM1Yw">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫取现8.8回u-二部</td>
+          <td>1003524424809</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDM1MjQ0MjQ4MDkvOWUwMWMzYmUyOTAzNjUyMDI5ZTBhZmJkN2VmZWE2YWI2ZTYyMDkyY2UxNGJmN2NlNjAzYmYyMWFhOWE1Y2EyZQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫工作群</td>
+          <td>1002427382467</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTEwMDI0MjczODI0NjcvZDAzZTBhMDE3OWJkOTdjY2FhODQyYzdiN2UyZTgxM2ExYzRjOWQ2OGY3ZmYwZjUyZjQ2YjlmYTgwYzlhYWM1MQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫现金 黄金供浩天大区</td>
+          <td>5058859009</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUwNTg4NTkwMDkvMDVjMzNiOGY0OWZiMDI0ZGM0MjdhMTJjMmYxMzExNWQwMzUzYjZjYTllZjc0ZGUxNWUxMTc4YzNmN2Q2YzUyMg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>金鑫黄金对接 贰群 8.2</td>
+          <td>4790139688</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3OTAxMzk2ODgvODg1YmUzMDc3MTQyZmRiNTllNjE2NzY0NWI3ZmE2YzlhZDVmNmZjNDU2MDZiNTZlYjhmMTY5NzA4ZWY5YTgzYg">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>鑫汇供金鑫</td>
+          <td>5232387654</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMzIzODc2NTQvZjRhNDExNjc1NjBjMWRhMjE0YzA4MzgxMzdiNmZiYmE5YTlhZWY5Y2NjZjcwMTAyZWZiZGQyZTRkMWU2OWI2NA">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>钱多多抖音码</td>
+          <td>4765454021</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTQ3NjU0NTQwMjEvOWY3YzEzMjZmYzQ3NzY3MDVjZTM0MWY1MjhmMGZmMGIyZWFiZjFmNTk4MDE5NWJhZTRjYjA1NDU4M2U4MzQ4YQ">查看账单</a></td>
+        </tr>
+
+        <tr>
+          <td>陆部-金鑫</td>
+          <td>5203055703</td>
+          <td><a href="https://jzhangdan.github.io/botWeb/?id=YmlsbHMvSlhaRlNQMDEvLTUyMDMwNTU3MDMvZTk3MjhkM2RhZGJkY2I0M2Q5OGRlMGVlNzYzNDBjYmZiNzRiNTI5ZjAzM2RiYjlhNWVkNjk4MGVhYzM1ZDIzYw">查看账单</a></td>
+        </tr></tbody>
+    </table>
+  </main>
+  <script>
+    document.getElementById("openBill").addEventListener("click", () => {
+      const url = document.getElementById("groupSelect").value;
+      if (url) location.href = url;
+    });
+  </script>
+</body>
+</html>
