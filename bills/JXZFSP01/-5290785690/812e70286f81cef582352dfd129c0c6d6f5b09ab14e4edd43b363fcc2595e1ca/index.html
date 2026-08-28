@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>久部-金鑫 - 账单明细</title>
+  <style>
+    :root {
+      --ink: #111;
+      --muted: #6f7b86;
+      --line: #e6e8eb;
+      --blue: #43a8e8;
+      --green: #22b573;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    a { color: #278bd8; text-decoration: none; }
+    .topbar { padding: 6px 10px 0; font-size: 14px; color: var(--muted); }
+    .group-title { padding: 2px 10px 20px; font-size: 15px; font-weight: 700; }
+    .page { max-width: 1260px; margin: 0 auto; padding: 0 16px 40px; }
+    .search-row { display: flex; align-items: center; gap: 8px; margin: 8px 0 70px; color: #4d5964; font-size: 14px; }
+    input[type="datetime-local"] { border: 0; background: #fafafa; color: #7b8490; padding: 7px 9px; min-width: 180px; font: inherit; }
+    .toolbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-bottom: 58px; }
+    .toolbar-main { display: flex; justify-content: center; gap: 12px; }
+    select { width: min(320px, 48vw); height: 44px; border: 1px solid #d7edf9; border-radius: 5px; background: #f7f7f7; padding: 0 16px; font-size: 18px; }
+    button, .export-button { border: 0; border-radius: 4px; background: var(--blue); color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 26px; font-size: 17px; font-weight: 600; }
+    .export-button { justify-self: center; min-height: 31px; padding: 0 18px; border-radius: 18px; border: 1px solid #222; font-size: 14px; }
+    .content { max-width: 1210px; margin: 0 auto; }
+    h2 { margin: 0 0 12px 10px; font-size: 22px; line-height: 1.2; }
+    .table-wrap { overflow-x: auto; margin-bottom: 18px; }
+    table.bill { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 860px; border: 1px solid var(--line); }
+    table.bill th, table.bill td { border: 1px solid var(--line); padding: 10px 12px; text-align: center; vertical-align: middle; }
+    table.bill th { font-weight: 500; background: #fff; }
+    table.bill td { height: 64px; }
+    .money-main { font-weight: 800; display: block; }
+    .subline { color: #111; display: block; margin-top: 2px; }
+    .category-title, .total-title { font-size: 22px; font-weight: 800; margin: 18px 0 12px 10px; }
+    details { border-bottom: 1px solid #eef0f2; padding: 14px 8px; font-size: 18px; }
+    summary { cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "›"; color: #777; margin-right: 8px; font-size: 24px; vertical-align: -1px; }
+    details[open] summary::before { content: "⌄"; }
+    .category-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 15px; }
+    .category-table th, .category-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+    .total { margin: 22px 0 0 10px; font-size: 19px; }
+    .total p { margin: 8px 0; }
+    .coin { display: inline-flex; width: 16px; height: 16px; align-items: center; justify-content: center; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 800; margin-right: 4px; vertical-align: 1px; }
+    .empty { padding: 26px 10px; color: var(--muted); font-size: 18px; }
+    @media (max-width: 720px) {
+      .search-row, .toolbar-main { flex-wrap: wrap; }
+      .toolbar { grid-template-columns: 1fr; margin-bottom: 28px; }
+      .export-button { justify-self: start; }
+      select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">💡 点击当前账单可查看历史，手机端请横屏查看 <a href="#" onclick="history.replaceState(null,'',location.pathname);return false;">清理所有点击痕迹</a></div>
+  <div class="group-title">《群组：久部-金鑫 -- 群 ID5290785690》</div>
+  <main class="page">
+    <form id="filters">
+      <div class="search-row">
+        <label><input id="timeSearch" type="checkbox"> 按时间搜索</label>
+        <input id="startAt" type="datetime-local">
+        <input id="endAt" type="datetime-local">
+      </div>
+      <div class="toolbar">
+        <span></span>
+        <div class="toolbar-main">
+          <select id="daySelect"></select>
+          <button type="submit">查看账单</button>
+        </div>
+        <a class="export-button" id="exportXlsx" href="bill-current.xlsx">导出xlsx</a>
+      </div>
+    </form>
+    <div class="content" id="content"></div>
+  </main>
+  <script id="billData" type="application/json">{"title": "久部-金鑫", "chatId": -5290785690, "today": "2026-08-28", "dates": ["2026-08-28", "2026-08-05", "2026-08-03", "2026-08-02", "2026-07-31", "2026-07-25", "2026-07-24", "2026-07-22", "2026-07-21", "2026-07-17", "2026-07-15", "2026-07-10", "2026-07-09", "2026-07-08", "2026-07-07", "2026-07-02", "2026-06-26"], "entries": [{"id": 423, "entry_type": "income", "amount": 200000.0, "currency": "CNY", "rate": 8.5, "fee_rate": 0.0, "cny_amount": 200000.0, "usdt_amount": 23529.41176470588, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-08-28", "created_at": "2026-08-28T15:05:35", "deleted_at": null}, {"id": 344, "entry_type": "disbursement", "amount": 12345.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 12345.0, "usdt_amount": 12345.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-08-05", "created_at": "2026-08-05T16:20:51", "deleted_at": "2026-08-06T05:00:01"}, {"id": 343, "entry_type": "income", "amount": 100000.0, "currency": "CNY", "rate": 8.1, "fee_rate": 0.0, "cny_amount": 100000.0, "usdt_amount": 12345.67901234568, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-08-05", "created_at": "2026-08-05T15:01:21", "deleted_at": "2026-08-06T05:00:01"}, {"id": 333, "entry_type": "disbursement", "amount": 10176.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 10176.0, "usdt_amount": 10176.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-08-03", "created_at": "2026-08-03T14:06:46", "deleted_at": "2026-08-04T05:00:47"}, {"id": 332, "entry_type": "income", "amount": 83443.5, "currency": "CNY", "rate": 8.2, "fee_rate": 0.0, "cny_amount": 83443.5, "usdt_amount": 10176.036585365855, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-08-03", "created_at": "2026-08-03T12:30:57", "deleted_at": "2026-08-04T05:00:47"}, {"id": 330, "entry_type": "disbursement", "amount": 4938.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 4938.0, "usdt_amount": 4938.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-08-02", "created_at": "2026-08-02T14:59:07", "deleted_at": "2026-08-03T05:00:41"}, {"id": 329, "entry_type": "income", "amount": 40000.0, "currency": "CNY", "rate": 8.1, "fee_rate": 0.0, "cny_amount": 40000.0, "usdt_amount": 4938.271604938272, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-08-02", "created_at": "2026-08-02T13:25:14", "deleted_at": "2026-08-03T05:00:41"}, {"id": 324, "entry_type": "disbursement", "amount": 7407.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 7407.0, "usdt_amount": 7407.0, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-31", "created_at": "2026-07-31T16:20:29", "deleted_at": "2026-08-01T05:00:27"}, {"id": 317, "entry_type": "income", "amount": 60000.0, "currency": "CNY", "rate": 8.1, "fee_rate": 0.0, "cny_amount": 60000.0, "usdt_amount": 7407.407407407408, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-31", "created_at": "2026-07-31T12:30:54", "deleted_at": "2026-08-01T05:00:27"}, {"id": 294, "entry_type": "disbursement", "amount": 6033.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 6033.0, "usdt_amount": 6033.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-25", "created_at": "2026-07-25T19:35:26", "deleted_at": "2026-07-26T05:00:07"}, {"id": 292, "entry_type": "income", "amount": 32097.0, "currency": "CNY", "rate": 8.7, "fee_rate": 0.0, "cny_amount": 32097.0, "usdt_amount": 3689.3103448275865, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-25", "created_at": "2026-07-25T19:32:44", "deleted_at": "2026-07-26T05:00:07"}, {"id": 287, "entry_type": "income", "amount": 20398.0, "currency": "CNY", "rate": 8.7, "fee_rate": 0.0, "cny_amount": 20398.0, "usdt_amount": 2344.5977011494256, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-25", "created_at": "2026-07-25T13:04:40", "deleted_at": "2026-07-26T05:00:07"}, {"id": 282, "entry_type": "income", "amount": 2344.5977011494256, "currency": "CNY", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 2344.5977011494256, "usdt_amount": 2344.5977011494256, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-25", "created_at": "2026-07-25T11:57:40", "deleted_at": "2026-07-25T13:04:32"}, {"id": 276, "entry_type": "disbursement", "amount": 5976.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 5976.0, "usdt_amount": 5976.0, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-24", "created_at": "2026-07-24T20:41:55", "deleted_at": "2026-07-25T05:00:29"}, {"id": 275, "entry_type": "income", "amount": 51996.0, "currency": "CNY", "rate": 8.7, "fee_rate": 0.0, "cny_amount": 51996.0, "usdt_amount": 5976.551724137931, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-24", "created_at": "2026-07-24T20:35:52", "deleted_at": "2026-07-25T05:00:29"}, {"id": 257, "entry_type": "disbursement", "amount": 3758.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 3758.0, "usdt_amount": 3758.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-22", "created_at": "2026-07-22T16:12:46", "deleted_at": "2026-07-23T05:00:52"}, {"id": 256, "entry_type": "income", "amount": 32697.0, "currency": "CNY", "rate": 8.7, "fee_rate": 0.0, "cny_amount": 32697.0, "usdt_amount": 3758.275862068966, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-22", "created_at": "2026-07-22T16:06:43", "deleted_at": "2026-07-23T05:00:52"}, {"id": 250, "entry_type": "disbursement", "amount": 26190.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 26190.0, "usdt_amount": 26190.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-22", "created_at": "2026-07-22T14:20:08", "deleted_at": "2026-07-23T05:00:52"}, {"id": 248, "entry_type": "income", "amount": 220000.0, "currency": "CNY", "rate": 8.4, "fee_rate": 0.0, "cny_amount": 220000.0, "usdt_amount": 26190.47619047619, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-22", "created_at": "2026-07-22T11:02:56", "deleted_at": "2026-07-23T05:00:52"}, {"id": 243, "entry_type": "disbursement", "amount": 11976.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 11976.0, "usdt_amount": 11976.0, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-21", "created_at": "2026-07-21T16:48:48", "deleted_at": "2026-07-22T05:00:45"}, {"id": 242, "entry_type": "income", "amount": 100000.0, "currency": "CNY", "rate": 8.35, "fee_rate": 0.0, "cny_amount": 100000.0, "usdt_amount": 11976.047904191617, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-21", "created_at": "2026-07-21T14:23:03", "deleted_at": "2026-07-22T05:00:45"}, {"id": 219, "entry_type": "disbursement", "amount": 56933.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 56933.0, "usdt_amount": 56933.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-17", "created_at": "2026-07-17T19:46:52", "deleted_at": "2026-07-18T05:00:28"}, {"id": 217, "entry_type": "disbursement", "amount": 1000.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 1000.0, "usdt_amount": 1000.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-17", "created_at": "2026-07-17T18:39:32", "deleted_at": "2026-07-18T05:00:28"}, {"id": 216, "entry_type": "income", "amount": 370000.0, "currency": "CNY", "rate": 8.3, "fee_rate": 0.0, "cny_amount": 370000.0, "usdt_amount": 44578.31325301204, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-17", "created_at": "2026-07-17T18:39:08", "deleted_at": "2026-07-18T05:00:28"}, {"id": 206, "entry_type": "disbursement", "amount": 88.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 88.0, "usdt_amount": 88.0, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-17", "created_at": "2026-07-17T10:47:27", "deleted_at": "2026-07-18T05:00:28"}, {"id": 205, "entry_type": "income", "amount": 120989.0, "currency": "CNY", "rate": 9.0, "fee_rate": 0.0, "cny_amount": 120989.0, "usdt_amount": 13443.222222222223, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-17", "created_at": "2026-07-17T10:47:05", "deleted_at": "2026-07-18T05:00:28"}, {"id": 179, "entry_type": "disbursement", "amount": 29940.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 29940.0, "usdt_amount": 29940.0, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-15", "created_at": "2026-07-15T14:23:24", "deleted_at": "2026-07-16T05:00:14"}, {"id": 175, "entry_type": "income", "amount": 250000.0, "currency": "CNY", "rate": 8.35, "fee_rate": 0.0, "cny_amount": 250000.0, "usdt_amount": 29940.119760479043, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-15", "created_at": "2026-07-15T12:35:40", "deleted_at": "2026-07-16T05:00:14"}, {"id": 145, "entry_type": "disbursement", "amount": 29048.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 29048.0, "usdt_amount": 29048.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-10", "created_at": "2026-07-10T18:09:01", "deleted_at": "2026-07-11T05:00:02"}, {"id": 140, "entry_type": "income", "amount": 259980.0, "currency": "CNY", "rate": 8.95, "fee_rate": 0.0, "cny_amount": 259980.0, "usdt_amount": 29048.044692737432, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-10", "created_at": "2026-07-10T13:25:31", "deleted_at": "2026-07-11T05:00:02"}, {"id": 135, "entry_type": "disbursement", "amount": 24096.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 24096.0, "usdt_amount": 24096.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-09", "created_at": "2026-07-09T16:13:47", "deleted_at": "2026-07-10T05:00:55"}, {"id": 133, "entry_type": "income", "amount": 200000.0, "currency": "CNY", "rate": 8.3, "fee_rate": 0.0, "cny_amount": 200000.0, "usdt_amount": 24096.38554216867, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-09", "created_at": "2026-07-09T14:23:27", "deleted_at": "2026-07-10T05:00:55"}, {"id": 123, "entry_type": "disbursement", "amount": 119047.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 119047.0, "usdt_amount": 119047.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-08", "created_at": "2026-07-08T14:16:26", "deleted_at": "2026-07-09T05:00:49"}, {"id": 121, "entry_type": "income", "amount": 1000000.0, "currency": "CNY", "rate": 8.4, "fee_rate": 0.0, "cny_amount": 1000000.0, "usdt_amount": 119047.61904761904, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-08", "created_at": "2026-07-08T11:56:26", "deleted_at": "2026-07-09T05:00:49"}, {"id": 116, "entry_type": "disbursement", "amount": 36144.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 36144.0, "usdt_amount": 36144.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-07", "created_at": "2026-07-07T18:23:19", "deleted_at": "2026-07-08T05:00:59"}, {"id": 115, "entry_type": "income", "amount": 300000.0, "currency": "CNY", "rate": 8.3, "fee_rate": 0.0, "cny_amount": 300000.0, "usdt_amount": 36144.57831325301, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-07", "created_at": "2026-07-07T17:03:46", "deleted_at": "2026-07-08T05:00:59"}, {"id": 85, "entry_type": "disbursement", "amount": 11904.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 11904.0, "usdt_amount": 11904.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-07-02", "created_at": "2026-07-02T12:31:26", "deleted_at": "2026-07-03T05:00:38"}, {"id": 84, "entry_type": "income", "amount": 100000.0, "currency": "CNY", "rate": 8.4, "fee_rate": 0.0, "cny_amount": 100000.0, "usdt_amount": 11904.761904761905, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-07-02", "created_at": "2026-07-02T09:59:06", "deleted_at": "2026-07-03T05:00:38"}, {"id": 30, "entry_type": "disbursement", "amount": 55192.0, "currency": "USDT", "rate": 1.0, "fee_rate": 0.0, "cny_amount": 55192.0, "usdt_amount": 55192.0, "group_key": "", "note": "", "username": "jxxiaomei521", "is_deposit": false, "occurred_on": "2026-06-26", "created_at": "2026-06-26T14:18:46", "deleted_at": "2026-06-27T05:00:25"}, {"id": 29, "entry_type": "income", "amount": 160000.0, "currency": "CNY", "rate": 8.4, "fee_rate": 0.0, "cny_amount": 160000.0, "usdt_amount": 19047.619047619046, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-06-26", "created_at": "2026-06-26T10:01:15", "deleted_at": "2026-06-27T05:00:25"}, {"id": 27, "entry_type": "income", "amount": 300000.0, "currency": "CNY", "rate": 8.3, "fee_rate": 0.0, "cny_amount": 300000.0, "usdt_amount": 36144.57831325301, "group_key": "", "note": "", "username": "tiantiananxin", "is_deposit": false, "occurred_on": "2026-06-26", "created_at": "2026-06-26T08:48:20", "deleted_at": "2026-06-27T05:00:25"}], "xlsx": {"current": "bill-current.xlsx", "all": "bill-all.xlsx", "2026-08-28": "bill-2026-08-28.xlsx", "2026-08-05": "bill-2026-08-05.xlsx", "2026-08-03": "bill-2026-08-03.xlsx", "2026-08-02": "bill-2026-08-02.xlsx", "2026-07-31": "bill-2026-07-31.xlsx", "2026-07-25": "bill-2026-07-25.xlsx", "2026-07-24": "bill-2026-07-24.xlsx", "2026-07-22": "bill-2026-07-22.xlsx", "2026-07-21": "bill-2026-07-21.xlsx", "2026-07-17": "bill-2026-07-17.xlsx", "2026-07-15": "bill-2026-07-15.xlsx", "2026-07-10": "bill-2026-07-10.xlsx", "2026-07-09": "bill-2026-07-09.xlsx", "2026-07-08": "bill-2026-07-08.xlsx", "2026-07-07": "bill-2026-07-07.xlsx", "2026-07-02": "bill-2026-07-02.xlsx", "2026-06-26": "bill-2026-06-26.xlsx"}}</script>
+  <script>
+    const bill = JSON.parse(document.getElementById("billData").textContent);
+    const daySelect = document.getElementById("daySelect");
+    const timeSearch = document.getElementById("timeSearch");
+    const startAt = document.getElementById("startAt");
+    const endAt = document.getElementById("endAt");
+    const content = document.getElementById("content");
+    const exportXlsx = document.getElementById("exportXlsx");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    }
+    function money(value) {
+      const text = Number(value || 0).toFixed(2);
+      return text.replace(/\.00$/, "").replace(/(\.\d*[1-9])0$/, "$1");
+    }
+    function percent(value) {
+      return money(value) + "%";
+    }
+    function marker(entry) {
+      return entry.group_key || entry.note || "";
+    }
+    function operatorName(entry) {
+      return entry.username || "未知";
+    }
+    function remark(entry) {
+      if (entry.group_key && entry.note) return entry.note;
+      if (entry.is_deposit) return "寄存";
+      return "";
+    }
+    function entryTime(entry) {
+      if (entry.created_at && entry.created_at.length >= 19) return entry.created_at.slice(5, 10) + " " + entry.created_at.slice(11, 19);
+      return entry.created_at || "";
+    }
+    function currentDay() {
+      return bill.today || new Date().toISOString().slice(0, 10);
+    }
+    function setDefaultTimes() {
+      const day = daySelect.value === "all" || daySelect.value === "current" ? currentDay() : daySelect.value;
+      if (!startAt.value) startAt.value = day + "T00:00";
+      if (!endAt.value) endAt.value = day + "T23:59";
+    }
+    function initDays() {
+      const options = [["current", "当前账单"], ["all", "全部历史"], ...bill.dates.map(day => [day, day])];
+      daySelect.innerHTML = options.map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`).join("");
+      setDefaultTimes();
+    }
+    function selectedEntries() {
+      let rows = bill.entries.slice();
+      if (daySelect.value === "current") rows = rows.filter(entry => entry.occurred_on === currentDay() && !entry.deleted_at);
+      else if (daySelect.value !== "all") rows = rows.filter(entry => entry.occurred_on === daySelect.value && !entry.deleted_at);
+      if (timeSearch.checked) {
+        const startValue = startAt.value ? startAt.value.replace("T", " ") : "";
+        const endValue = endAt.value ? endAt.value.replace("T", " ") + ":59" : "";
+        rows = rows.filter(entry => (!startValue || entry.created_at >= startValue) && (!endValue || entry.created_at <= endValue));
+      }
+      return rows;
+    }
+    function incomeRow(entry) {
+      return `<tr><td>${escapeHtml(entryTime(entry))}</td><td><span class="money-main">${money(entry.cny_amount)}</span><span class="subline">${percent(entry.fee_rate)} = ${money(entry.rate)}</span></td><td>${money(entry.usdt_amount)}</td><td>${escapeHtml(marker(entry))}</td><td>${escapeHtml(operatorName(entry))}</td><td>${escapeHtml(remark(entry))}</td></tr>`;
+    }
+    function disbursementRow(entry) {
+      const amount = entry.currency === "CNY" ? `${money(entry.usdt_amount)} (${money(entry.cny_amount)})` : money(entry.usdt_amount);
+      return `<tr><td>${escapeHtml(entryTime(entry))}</td><td><span class="coin">T</span>${escapeHtml(amount)}</td><td>${escapeHtml(marker(entry))}</td><td>${escapeHtml(operatorName(entry))}</td><td>${escapeHtml(remark(entry))}</td></tr>`;
+    }
+    function table(title, rows, columns, rowRenderer) {
+      const empty = `<tr><td colspan="${columns.length}">暂无记录</td></tr>`;
+      return `<h2>${title}(${rows.length}笔)</h2><div class="table-wrap"><table class="bill"><thead><tr>${columns.map(name => `<th>${name}</th>`).join("")}</tr></thead><tbody>${rows.map(rowRenderer).join("") || empty}</tbody></table></div>`;
+    }
+    function aggregate(rows, keyFn) {
+      const groups = new Map();
+      rows.forEach(entry => {
+        const key = keyFn(entry) || "未标记";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(entry);
+      });
+      return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0], "zh-CN"));
+    }
+    function category(title, grouped) {
+      if (!grouped.length) return `<details><summary>${escapeHtml(title)}</summary><div class="empty">暂无数据</div></details>`;
+      const rows = grouped.map(([name, items]) => {
+        const incomeU = sum(items.filter(e => e.entry_type === "income"), "usdt_amount");
+        const payoutU = sum(items.filter(e => e.entry_type === "payout"), "usdt_amount");
+        const disbursedU = sum(items.filter(e => e.entry_type === "disbursement"), "usdt_amount");
+        const cnyTotal = sum(items.filter(e => e.entry_type === "income"), "cny_amount") - sum(items.filter(e => e.entry_type === "payout"), "cny_amount");
+        return `<tr><td>${escapeHtml(name)}</td><td>${items.length}</td><td>${money(cnyTotal)}</td><td>${money(incomeU - payoutU)}</td><td>${money(disbursedU)}</td></tr>`;
+      }).join("");
+      return `<details><summary>${escapeHtml(title)}</summary><table class="category-table"><thead><tr><th>分类</th><th>笔数</th><th>总入款</th><th>应下发</th><th>已下发</th></tr></thead><tbody>${rows}</tbody></table></details>`;
+    }
+    function sum(rows, key) {
+      return rows.reduce((total, entry) => total + Number(entry[key] || 0), 0);
+    }
+    function render() {
+      const rows = selectedEntries();
+      const income = rows.filter(entry => entry.entry_type === "income");
+      const payout = rows.filter(entry => entry.entry_type === "payout");
+      const disbursement = rows.filter(entry => entry.entry_type === "disbursement");
+      const totalCny = sum(income, "cny_amount") - sum(payout, "cny_amount");
+      const shouldU = sum(income, "usdt_amount") - sum(payout, "usdt_amount");
+      const disbursedU = sum(disbursement, "usdt_amount");
+      exportXlsx.href = bill.xlsx[daySelect.value] || "bill-current.xlsx";
+      content.innerHTML = [
+        table("入账", income, ["时间", "金额", "结算", "标记人", "操作人", "备注"], incomeRow),
+        payout.length ? table("代付", payout, ["时间", "金额", "结算", "标记人", "操作人", "备注"], incomeRow) : "",
+        table("下发", disbursement, ["时间", "金额", "标记人", "操作人", "备注"], disbursementRow),
+        rows.length ? "" : '<div class="empty">暂无账单记录。</div>',
+        '<div class="category-title">记账分类</div>',
+        category("按(操作员)分类", aggregate(rows, operatorName)),
+        category("按(标记类)分组", aggregate(rows, marker)),
+        category("按(备注)分组", aggregate(rows, remark)),
+        category("按(入款汇率)分类", aggregate(income, entry => money(entry.rate))),
+        category("按(入款汇率和操作人)分类", aggregate(income, entry => money(entry.rate) + " / " + operatorName(entry))),
+        `<div class="total-title">总计</div><div class="total"><p>总入款： ${money(totalCny)}</p><p>应下发： ${money(shouldU)} <span class="coin">T</span></p><p>已下发： ${money(disbursedU)} <span class="coin">T</span></p><p>未下发： ${money(shouldU - disbursedU)} <span class="coin">T</span></p></div>`,
+      ].join("");
+    }
+    document.getElementById("filters").addEventListener("submit", event => {
+      event.preventDefault();
+      render();
+    });
+    daySelect.addEventListener("change", () => {
+      startAt.value = "";
+      endAt.value = "";
+      setDefaultTimes();
+      render();
+    });
+    timeSearch.addEventListener("change", render);
+    startAt.addEventListener("change", render);
+    endAt.addEventListener("change", render);
+    initDays();
+    render();
+  </script>
+</body>
+</html>
